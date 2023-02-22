@@ -3,20 +3,22 @@ run-name: Remove AppCenter deployments for this PR
 
 on:
   workflow_call:
-
-inputs:
-  appcenter-android-api-token:
-    description: 'AppCenter Android API Token'
-    required: true
-  appcenter-ios-api-token:
-    description: 'AppCenter iOS API Token'
-    required: true
-  appcenter-android-app-name:
-    description: 'AppCenter Android App Name'
-    required: true
-  appcenter-ios-app-name:
-    description: 'AppCenter iOS App Name'
-    required: true
+    secrets:
+      appcenter-android-api-token:
+        description: 'AppCenter Android API Token'
+        required: true
+      appcenter-ios-api-token:
+        description: 'AppCenter iOS API Token'
+        required: true
+    inputs:
+      appcenter-android-app-name:
+        description: 'AppCenter Android App Name'
+        required: true
+        type: string
+      appcenter-ios-app-name:
+        description: 'AppCenter iOS App Name'
+        required: true
+        type: string
 
 jobs:
   remove-app-center-deployments:
@@ -31,7 +33,7 @@ jobs:
       - run: npm install -g appcenter-cli
       - name: Remove iOS codepush deployment
         run: |
-          appcenter codepush deployment remove --quiet --token "${{ github.event.inputs.appcenter-ios-api-token }}" -a "Ornikar/${{ github.event.inputs.appcenter-ios-app-name }}"  $(echo "${{ steps.branch-name.outputs.current_branch }}" | sed -r 's/\//_/g')
+          appcenter codepush deployment remove --quiet --token "${{ secrets.appcenter-ios-api-token }}" -a "Ornikar/${{ inputs.appcenter-ios-app-name }}"  $(echo "${{ steps.branch-name.outputs.current_branch }}" | sed -r 's/\//_/g')
       - name: Remove Android codepush deployment
         run: |
-          appcenter codepush deployment remove --quiet --token "${{ github.event.inputs.appcenter-android-api-token }}" -a "Ornikar/${{ github.event.inputs.appcenter-android-app-name }}"  $(echo "${{ steps.branch-name.outputs.current_branch }}" | sed -r 's/\//_/g')
+          appcenter codepush deployment remove --quiet --token "${{ secrets.appcenter-android-api-token }}" -a "Ornikar/${{ inputs.appcenter-android-app-name }}"  $(echo "${{ steps.branch-name.outputs.current_branch }}" | sed -r 's/\//_/g')
